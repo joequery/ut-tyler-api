@@ -1,0 +1,4 @@
+pyquery
+git+git://github.com/joequery/requests-sslv3.git
+flask
+formencode
