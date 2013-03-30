@@ -73,4 +73,21 @@ def announcements():
     except Exception, e:
         return err_json(GENERIC_ERROR)
 
+@v1.route('/myuttyler', methods=["POST"])
+def myuttyler():
+    dataDict = variable_encode(request.form)
+    try:
+        username = dataDict.get('username')
+        password = dataDict.get('password')
+        cookie = myuttyler_authenticate(username, password)
+        if not cookie:
+            return err_json("authenticationFailure", 401)
+
+        data = get_myutt_info(cookie)
+
+        # Wrap in a dict since jsonify doesn't accept pure lists
+        return my_jsonify({"myuttyler":data})
+
+    except Exception, e:
+        return err_json(GENERIC_ERROR)
 

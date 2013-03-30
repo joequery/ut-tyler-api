@@ -34,10 +34,12 @@ Not yet, but I plan on hosting a version on my server very soon.
 Endpoints
 ---------
 
-The URL will be structured `http://localhost:5000/API_VERSION/endpoint`. So, for
+### Making API calls
+
+The URL should be structured `http://localhost:5000/API_VERSION/endpoint`. So, for
 example, `http://localhost:5000/1.0/grades`.
 
-**All requests should be of type POST**.
+All requests should be of type **POST**.
 
 ### Retrieving student grades
 
@@ -162,3 +164,193 @@ example, `http://localhost:5000/1.0/grades`.
                     ]
                 }
 
+### Retrieving MyUTTyler info (schedule, TODO list, account summary)
+
+* Endpoint: `/myuttyler`
+* Expected data parameters:
+    + `username`: The UT Tyler patriot user name
+    + `password`: The UT Tyler patriot password
+* Responses:
+    + Student authentication failure
+        - Status code: 401
+        - JSON: `{"error": "authenticationFailure"}`
+    + Generic Server Error
+        - Status code: 500
+        - JSON: `{"error": "serverError"}`
+    + Successful announcement retrieval
+        - Status code: 200
+        - JSON: 
+
+{'myuttyler': 
+    {'schedule': 
+        [
+            [
+                'Monday',
+                [
+                    {
+                        'courseNum': 4361,
+                        'location': 'Ratliff Building North 03038',
+                        'startTime': {
+                                         'hour': 9,
+                                         'min': 50,
+                                         'str': '9:50AM'
+                                     },
+                        'subject': 'COSC',
+                        'time': '9:00AM-9:50AM'
+                    },
+                    {
+                        'courseNum': 3336,
+                        'location': 'Ratliff Building North 04025',
+                        'startTime': {
+                                          'hour': 10,
+                                          'min': 50,
+                                          'str': '10:50AM'
+                                     },
+                        'subject': 'MATH',
+                        'time': '10:00AM-10:50AM'
+                    },
+                    {
+                        'courseNum': 4336,
+                        'location': 'Ratliff Building North 03039',
+                        'startTime': {
+                                         'hour': 12,
+                                         'min': 50,
+                                         'str': '12:50PM'
+                                     },
+                        'subject': 'COSC',
+                        'time': '12:00PM-12:50PM'
+                    }
+                ]
+            ],
+            [
+                'Tuesday',
+                [
+                    {
+                        'courseNum': 4340,
+                        'location': 'Ratliff Building North 03039',
+                        'startTime': {
+                                         'hour': 10,
+                                         'min': 45,
+                                         'str': '10:45AM'
+                                     },
+                        'subject': 'COSC',
+                        'time': '9:30AM-10:45AM'
+                    }
+                ]
+            ],
+            [
+                'Wednesday',
+                [
+                    {
+                        'courseNum': 4361,
+                        'location': 'Ratliff Building North 03038',
+                        'startTime': {
+                                        'hour': 9,
+                                        'min': 50,
+                                        'str': '9:50AM'
+                                     },
+                        'subject': 'COSC',
+                        'time': '9:00AM-9:50AM'
+                    },
+                    {
+                        'courseNum': 3336,
+                        'location': 'Ratliff Building North 04025',
+                        'startTime': {
+                                        'hour': 10,
+                                        'min': 50,
+                                        'str': '10:50AM'
+                                     },
+                        'subject': 'MATH',
+                        'time': '10:00AM-10:50AM'
+                    },
+                    {
+                        'courseNum': 4336,
+                        'location': 'Ratliff Building North 03039',
+                        'startTime': {
+                                        'hour': 12,
+                                        'min': 50,
+                                        'str': '12:50PM'
+                                     },
+                        'subject': 'COSC',
+                        'time': '12:00PM-12:50PM'
+                    }
+                ]
+            ],
+            [
+                'Thursday',
+                [
+                    {
+                        'courseNum': 4340,
+                        'location': 'Ratliff Building North 03039',
+                        'startTime': {
+                                        'hour': 10,
+                                        'min': 45,
+                                        'str': '10:45AM'
+                                     },
+                        'subject': 'COSC',
+                        'time': '9:30AM-10:45AM'
+                    }
+                ]
+            ],
+            [
+                'Friday',
+                [
+                    {
+                        'courseNum': 4361,
+                        'location': 'Ratliff Building North 03038',
+                        'startTime': {
+                                         'hour': 9,
+                                         'min': 50,
+                                         'str': '9:50AM'
+                                     },
+                        'subject': 'COSC',
+                        'time': '9:00AM-9:50AM'
+                    },
+                    {
+                        'courseNum': 3336,
+                        'location': 'Ratliff Building North 04025',
+                        'startTime': {
+                                         'hour': 10,
+                                         'min': 50,
+                                         'str': '10:50AM'
+                                     },
+                        'subject': 'MATH',
+                        'time': '10:00AM-10:50AM'
+                    },
+                    {
+                        'courseNum': 4336,
+                        'location': 'Ratliff Building North 03039',
+                        'startTime': {
+                                         'hour': 12,
+                                         'min': 50,
+                                         'str': '12:50PM'
+                                       },
+                        'subject': 'COSC',
+                        'time': '12:00PM-12:50PM'
+                    }
+                ]
+            ],
+            [
+                'TBA',
+                [
+                    {
+                        'courseNum': 4229,
+                        'date': 'TBA',
+                        'startTime': {
+                                         'hour': 0,
+                                         'min': 0,
+                                         'str': '12:00AM'
+                                     },
+                        'subject': 'MUAP',
+                        'time': 'TBA'
+                    }
+                ]
+            ]
+        ],
+    'summary': False,
+    'todo': [
+                "TODO Item1",
+                "TODO Item2"
+            ]
+    }
+}
