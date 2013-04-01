@@ -224,7 +224,11 @@ def get_announcements(blackboard_cookies):
   url = "https://blackboard.uttyler.edu/webapps/blackboard/execute/announcement?method=search&context=mybb&viewChoice=3"
 
   r = requests.get(url=url, cookies=blackboard_cookies)
-  jQuery = PyQuery(r.content)
+  announcementHTML = r.content
+  return parse_announcement_html(announcementHTML)
+
+def parse_announcement_html(announcementHTML):
+  jQuery = PyQuery(announcementHTML)
 
   announcements = []
   announcementLIs = jQuery("ul#announcementList").children("li")
@@ -263,12 +267,24 @@ def get_announcements(blackboard_cookies):
         "course":course
       })
   return sorted(announcements, key=lambda k: k['timestamp'], reverse=True)
+
  
 
 #########################################################
 # Blackboard Grades
 #########################################################
 def get_grades(blackboard_cookies):
+    gradelist = []
+    courses = get_course_urls(blackboard_cookies)
+    for name,url in courses:
+        # Retrieve SOFTWARE DEVELOPMENT from "2013-SPRING-COSC-4336.001 (SOFTWARE DEVELOPMENT)"
+        grades = get_grades_from_url(url, blackboard_cookies)
+        if grades:
+            gradelist.append((name, grades))
+    # Sort courses by the timestamp of the most recent grade for that course
+    return sorted(gradelist, key=lambda k: k[1][0]['timestamp'], reverse=True)
+
+def get_course_urls(blackboard_cookies):
   courseListURL = "https://blackboard.uttyler.edu/webapps/portal/execute/tabs/tabAction"
   gradeURLPattern = "https://blackboard.uttyler.edu/webapps/bb-mygrades-bb_bb60/myGrades?course_id=%s&stream_name=mygrades&is_stream=false"
   data = {'action': 'refreshAjaxModule', 'tabId': '_2_1', 'modId': '_4_1',
@@ -301,12 +317,16 @@ def get_grades(blackboard_cookies):
 
   if retryCount == retries:
       return []
+  else:
+      return courses
 
   
-  def parse_gradebook(courseURL, cookies):
+def get_grades_from_url(courseURL, cookies):
     gradeRequest = requests.get(url=courseURL, cookies=cookies)
-    jQuery = PyQuery(gradeRequest.content)
+    return parse_grades_html(gradeRequest.content)
 
+def parse_grades_html(gradeHTML):
+    jQuery = PyQuery(gradeHTML)
     items = jQuery(".has-stats > div.grade-item")
 
     # Only items with timestamps are actual grades
@@ -314,27 +334,18 @@ def get_grades(blackboard_cookies):
     grades = []
 
     for item in items:
-      title = item.children(".name").text()
-      grade = item.find(".gradeCellGrade").remove("span.grade-label").text()
+        title = item.children(".name").text()
+        grade = item.find(".gradeCellGrade").remove("span.grade-label").text()
 
-      date = item.find("span.timestamp").text()
-      dateObj = time.strptime(date.lower(), "%b %d, %Y %I:%M %p")
-      timestamp = int(time.mktime(dateObj))
+        date = item.find("span.timestamp").text()
+        dateObj = time.strptime(date.lower(), "%b %d, %Y %I:%M %p")
+        timestamp = int(time.mktime(dateObj))
 
-      grades.append({
-        "title":title,
-        "grade":grade,
-        "date":date,
-        "timestamp":timestamp
-      })
+        grades.append({
+            "title":title,
+            "grade":grade,
+            "date":date,
+            "timestamp":timestamp
+        })
     return sorted(grades, key=lambda k: k['timestamp'], reverse=True)
 
-  gradelist = []
-  for name,url in courses:
-    # Retrieve SOFTWARE DEVELOPMENT from "2013-SPRING-COSC-4336.001 (SOFTWARE DEVELOPMENT)"
-    grades = parse_gradebook(url, blackboard_cookies)
-    if grades:
-        gradelist.append((name, grades))
-
-  # Sort courses by the timestamp of the most recent grade for that course
-  return sorted(gradelist, key=lambda k: k[1][0]['timestamp'], reverse=True)
