@@ -276,7 +276,8 @@ def parse_announcement_html(announcementHTML):
 def get_grades(blackboard_cookies):
     gradelist = []
     courses = get_course_urls(blackboard_cookies)
-    for name,url in courses:
+    for courseID, courseInfo in courses.iteritems():
+        name,url = courseInfo
         # Retrieve SOFTWARE DEVELOPMENT from "2013-SPRING-COSC-4336.001 (SOFTWARE DEVELOPMENT)"
         grades = get_grades_from_url(url, blackboard_cookies)
         if grades:
@@ -309,7 +310,7 @@ def get_course_urls(blackboard_cookies):
               href = jQuery(a).attr("href")
               courseID = re.search(r'id%3D([^%]+)%', href).groups()[0]
               gradesURL = gradeURLPattern % courseID
-              courses.append((name, gradesURL))
+              courses.append({courseID: (name, gradesURL)})
           haveData = True
       except IndexError:
           retryCount += 1
@@ -348,4 +349,44 @@ def parse_grades_html(gradeHTML):
             "timestamp":timestamp
         })
     return sorted(grades, key=lambda k: k['timestamp'], reverse=True)
+
+#########################################################
+# Notifications
+#########################################################
+def parse_notifications_json(notificationsJSON):
+    notificationsDict = json.loads(notificationsJSON)
+
+    # Sort entries by timestamp, most recent at entries[0]
+    entries = sorted(notificationsDict['sv_streamEntries'], 
+                                key = lambda k: k['se_timestamp'], reverse=True)
+
+    # We only want the 10 most recent entries
+    recentEntries = entries[:10]
+
+    notifications = []
+    for e in recentEntries:
+        # For some reason, the timestamp is padded with 3 0's.
+        tstamp = e['se_timestamp'] / 1000
+
+        # The json is delimited by \r\n, take advantage of that to remove
+        # excess information
+        rawHTML = e['se_context'].split("\r\n")[0]
+
+        # Remove HTML. Don't give me that tony the pony shit, this is trivial
+        # html we're stripping here.
+        notification = re.sub('<[^<]+?>', '', rawHTML)
+
+        d = datetime.datetime.fromtimestamp(tstamp).strftime
+        dateStrFmt = "%s %d, %s %s"
+
+        # Use int to remove leading 0 from day of the month.
+        prettyDate = dateStrFmt % (d("%b"), int(d("%d")), d("%Y"), d("%I:%M %p"))
+
+        notifications.append({
+            "notification":notification,
+            "timestamp":tstamp,
+            "date": prettyDate
+        })
+    return notifications
+
 

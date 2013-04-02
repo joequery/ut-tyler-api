@@ -56,6 +56,27 @@ class UTTylerAPITests(unittest.TestCase):
         ]
         self.assertEqual(expectedGrades, grades)
 
+    def test_parse_notification_json(self):
+        f = open("testfiles/notifications.json")
+        notificationJSON = f.read()
+        f.close()
+
+        notifications = scrape.parse_notifications_json(notificationJSON)
+
+        expectedFirstNotification = {
+            'notification': 'Content Topic IX - Component-Level Design Available',
+            'date': 'Apr 1, 2013 12:40 PM',
+            'timestamp': 1364838029
+        }
+
+        expectedLastNotification = {
+            'notification': 'Manual Grade of Homework 9 Updated',
+            'date': 'Mar 29, 2013 09:22 AM',
+            'timestamp': 1364566971
+        }
+
+        self.assertEqual(expectedFirstNotification, notifications[0])
+        self.assertEqual(expectedLastNotification, notifications[-1])
 
 
 if __name__ == "__main__":
