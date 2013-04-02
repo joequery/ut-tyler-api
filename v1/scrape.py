@@ -276,8 +276,8 @@ def parse_announcement_html(announcementHTML):
 def get_grades(blackboard_cookies):
     gradelist = []
     courses = get_course_urls(blackboard_cookies)
-    for courseID, courseInfo in courses.iteritems():
-        name,url = courseInfo
+    for courseDict in courses:
+        name,url = courseDict.values()[0]
         # Retrieve SOFTWARE DEVELOPMENT from "2013-SPRING-COSC-4336.001 (SOFTWARE DEVELOPMENT)"
         grades = get_grades_from_url(url, blackboard_cookies)
         if grades:
