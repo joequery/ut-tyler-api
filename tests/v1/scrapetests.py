@@ -3,11 +3,7 @@
 import unittest
 from v1 import scrape
 from mysecret import USERNAME, PASSWORD
-from testhelpers import testfile, header
-
-header("1.0 API Tests")
-
-SKIP_LOGIN_TESTS = True
+from tests.testhelpers import testfile
 
 class UTTylerScrapeTests(unittest.TestCase):
     def test_parse_announcement_html(self):
@@ -83,14 +79,6 @@ class UTTylerScrapeTests(unittest.TestCase):
 
         self.assertEqual(expectedFirstNotification, notifications[0])
         self.assertEqual(expectedLastNotification, notifications[-1])
-
-@unittest.skipIf(SKIP_LOGIN_TESTS, "Skipping login tests")
-class UTTylerAPITests(unittest.TestCase):
-    def setUp(self):
-        self.app = app.test_client()
-
-    def test_get_grades(self):
-        grades = scrape.get_grades
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
