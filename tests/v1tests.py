@@ -1,11 +1,17 @@
 # UT Tyler API tests
 
 import unittest
-import scrape
+from v1 import scrape
+from mysecret import USERNAME, PASSWORD
+from testhelpers import testfile, header
 
-class UTTylerAPITests(unittest.TestCase):
+header("1.0 API Tests")
+
+SKIP_LOGIN_TESTS = True
+
+class UTTylerScrapeTests(unittest.TestCase):
     def test_parse_announcement_html(self):
-        f = open("testfiles/announcements.html")
+        f = testfile("v1/announcements.html")
         announcementHTML = f.read()
         f.close()
 
@@ -29,7 +35,7 @@ class UTTylerAPITests(unittest.TestCase):
         self.assertEqual(expectedAnnouncements, announcements)
 
     def test_parse_grades_html(self):
-        f = open("testfiles/grades.html")
+        f = testfile("v1/grades.html")
         gradesHTML = f.read()
         f.close()
 
@@ -57,7 +63,7 @@ class UTTylerAPITests(unittest.TestCase):
         self.assertEqual(expectedGrades, grades)
 
     def test_parse_notification_json(self):
-        f = open("testfiles/notifications.json")
+        f = testfile("v1/notifications.json")
         notificationJSON = f.read()
         f.close()
 
@@ -78,6 +84,13 @@ class UTTylerAPITests(unittest.TestCase):
         self.assertEqual(expectedFirstNotification, notifications[0])
         self.assertEqual(expectedLastNotification, notifications[-1])
 
+@unittest.skipIf(SKIP_LOGIN_TESTS, "Skipping login tests")
+class UTTylerAPITests(unittest.TestCase):
+    def setUp(self):
+        self.app = app.test_client()
+
+    def test_get_grades(self):
+        grades = scrape.get_grades
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
