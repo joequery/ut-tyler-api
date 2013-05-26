@@ -4,6 +4,7 @@ import unittest
 from v1 import scrape
 from mysecret import USERNAME, PASSWORD
 from tests.testhelpers import testfile
+import datetime
 
 class UTTylerScrapeTests(unittest.TestCase):
     def test_parse_announcement_html(self):
@@ -27,7 +28,8 @@ class UTTylerScrapeTests(unittest.TestCase):
                 'title': 'Homework #10 is posted'
             }
         ]
-        announcements = scrape.parse_announcement_html(announcementHTML)
+        now = datetime.datetime(2013, 3, 30)
+        announcements = scrape.parse_announcement_html(announcementHTML, now)
         self.assertEqual(expectedAnnouncements, announcements)
 
     def test_parse_grades_html(self):

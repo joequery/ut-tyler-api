@@ -227,12 +227,15 @@ def get_announcements(blackboard_cookies):
   announcementHTML = r.content
   return parse_announcement_html(announcementHTML)
 
-def parse_announcement_html(announcementHTML):
+def parse_announcement_html(announcementHTML, now=None):
   jQuery = PyQuery(announcementHTML)
+
+  # Allow overriding of now for testing purposes
+  if not now:
+      now = datetime.datetime.utcnow()
 
   announcements = []
   announcementLIs = jQuery("ul#announcementList").children("li")
-  now = datetime.datetime.utcnow()
 
   for li in announcementLIs:
     date = jQuery(li).find(".details p").eq(0)
