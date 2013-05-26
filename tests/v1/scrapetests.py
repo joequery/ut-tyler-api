@@ -8,10 +8,7 @@ import datetime
 
 class UTTylerScrapeTests(unittest.TestCase):
     def test_parse_announcement_html(self):
-        f = testfile("v1/announcements.html")
-        announcementHTML = f.read()
-        f.close()
-
+        announcementHTML = testfile("v1/announcements.html")
         expectedAnnouncements = [
             {
                 'date': 'Friday, March 29, 2013', 
@@ -33,10 +30,7 @@ class UTTylerScrapeTests(unittest.TestCase):
         self.assertEqual(expectedAnnouncements, announcements)
 
     def test_parse_grades_html(self):
-        f = testfile("v1/grades.html")
-        gradesHTML = f.read()
-        f.close()
-
+        gradesHTML = testfile("v1/grades.html")
         grades = scrape.parse_grades_html(gradesHTML)
         expectedGrades = [
             {
@@ -61,10 +55,7 @@ class UTTylerScrapeTests(unittest.TestCase):
         self.assertEqual(expectedGrades, grades)
 
     def test_parse_notification_json(self):
-        f = testfile("v1/notifications.json")
-        notificationJSON = f.read()
-        f.close()
-
+        notificationJSON = testfile("v1/notifications.json")
         notifications = scrape.parse_notifications_json(notificationJSON)
 
         expectedFirstNotification = {
